@@ -4,6 +4,10 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
+# Variables de entorno (claves de Clerk)
+.env
+!.env.example
+
 # Base de datos local (tus tarjetas viven aquí: haz copia de backend/data/)
 backend/data/
 

@@ -1,8 +1,8 @@
-"""Modelos ORM: Topic (tema) 1─N Card (tarjeta) N─N Tag."""
+"""Modelos ORM: User 1─N Topic (tema) 1─N Card (tarjeta) N─N Tag. Todo pertenece a un usuario."""
 
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, DateTime, ForeignKey, String, Table, Text, TypeDecorator
+from sqlalchemy import Column, DateTime, ForeignKey, String, Table, Text, TypeDecorator, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -37,11 +37,24 @@ card_tags = Table(
 )
 
 
-class Topic(Base):
-    __tablename__ = "topics"
+class User(Base):
+    __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100), unique=True)
+    # "sub" del token de Clerk, p. ej. "user_2abc…"
+    clerk_id: Mapped[str] = mapped_column(String(64), unique=True)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
+
+
+class Topic(Base):
+    __tablename__ = "topics"
+    # El nombre es único por usuario (dos usuarios pueden tener un tema "GitHub").
+    __table_args__ = (UniqueConstraint("user_id", "name"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # Nullable solo por los datos previos a los usuarios; la API siempre lo rellena.
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(100))
     description: Mapped[str] = mapped_column(Text, default="")
     color: Mapped[str] = mapped_column(String(20), default="blue")
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
@@ -55,6 +68,7 @@ class Card(Base):
     __tablename__ = "cards"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String(200))
     content: Mapped[str] = mapped_column(Text, default="")
@@ -73,8 +87,10 @@ class Card(Base):
 
 class Tag(Base):
     __tablename__ = "tags"
+    __table_args__ = (UniqueConstraint("user_id", "name"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(50), unique=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(50))
 
     cards: Mapped[list[Card]] = relationship(secondary=card_tags, back_populates="tags")

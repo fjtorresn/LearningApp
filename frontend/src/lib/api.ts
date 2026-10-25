@@ -62,10 +62,21 @@ export class ApiError extends Error {
   }
 }
 
+// Clerk entrega el token de sesión; AppProvider registra aquí la función que lo obtiene.
+let getToken: () => Promise<string | null> = async () => null;
+export function setAuthTokenGetter(fn: () => Promise<string | null>) {
+  getToken = fn;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = await getToken();
   const res = await fetch(`/api${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...init?.headers,
+    },
     cache: "no-store",
   });
   if (!res.ok) {
@@ -77,6 +88,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       // respuesta sin JSON (p. ej. el backend no está corriendo)
       if (res.status >= 500) message = "No se pudo conectar con el backend. ¿Está corriendo en el puerto 8765?";
+      if (res.status === 401) message = "Tu sesión ha caducado. Vuelve a iniciar sesión.";
     }
     throw new ApiError(res.status, message);
   }

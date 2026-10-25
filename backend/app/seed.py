@@ -1,13 +1,14 @@
 """Carga tarjetas de ejemplo (sobre las tecnologías de esta misma app).
 
 Uso:  uv run python -m app.seed
-Solo hace algo si la base de datos está vacía.
+Solo hace algo si la base de datos está vacía. Las tarjetas se asignan al primer usuario
+registrado; si aún no hay ninguno, serán de quien inicie sesión primero.
 """
 
 from sqlalchemy import func, select
 
 from app.db import SessionLocal
-from app.models import Card, Topic
+from app.models import Card, Tag, Topic, User
 from app.search import index_card
 from app.tags import get_or_create_tags
 
@@ -134,17 +135,25 @@ gh pr create --fill
 ]
 
 
+def _orphan_tags(db, names: list[str]) -> list[Tag]:
+    """Tags sin dueño (se asignarán al primer usuario junto con el resto)."""
+    existing = {t.name: t for t in db.scalars(select(Tag).where(Tag.user_id.is_(None), Tag.name.in_(names)))}
+    return [existing.get(n) or Tag(name=n) for n in names]
+
+
 def seed() -> None:
     with SessionLocal() as db:
         if db.scalar(select(func.count(Topic.id))):
             print("La base de datos ya tiene datos; no se carga el seed.")
             return
+        owner = db.scalar(select(User).order_by(User.id).limit(1))
+        owner_id = owner.id if owner else None
         for t in SEED:
-            topic = Topic(name=t["name"], description=t["description"], color=t["color"])
+            topic = Topic(name=t["name"], description=t["description"], color=t["color"], user_id=owner_id)
             db.add(topic)
             for c in t["cards"]:
-                card = Card(title=c["title"], content=c["content"], topic=topic)
-                card.tags = get_or_create_tags(db, c["tags"])
+                card = Card(title=c["title"], content=c["content"], topic=topic, user_id=owner_id)
+                card.tags = get_or_create_tags(db, owner, c["tags"]) if owner else _orphan_tags(db, c["tags"])
                 db.add(card)
                 db.flush()
                 index_card(db, card)

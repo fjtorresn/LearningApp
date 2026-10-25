@@ -6,11 +6,37 @@ Base de conocimiento personal: organiza los conceptos y tecnologías que vas apr
 
 Requisitos: [uv](https://docs.astral.sh/uv/) y Node.js 20+.
 
+1. **Claves de Clerk** (login con Google). En `frontend/` ejecuta `npx clerk init` (o copia tus claves del
+   [dashboard de Clerk](https://dashboard.clerk.com/) a `frontend/.env.local`).
+2. Copia `backend/.env.example` a `backend/.env` y pon la misma *publishable key* (`pk_test_…`).
+3. Arranca todo:
+
 ```bash
 ./dev.sh
 ```
 
-Abre http://localhost:3000. La documentación interactiva de la API está en http://localhost:8765/docs.
+Abre http://localhost:3000 e inicia sesión con Google. La documentación interactiva de la API está en http://localhost:8765/docs.
+
+## Usuarios
+
+- El login lo gestiona **Clerk**. Cada usuario solo ve sus propios temas, tarjetas y tags.
+- El frontend envía el token de sesión (`Authorization: Bearer …`) y FastAPI lo verifica con las claves
+  públicas de Clerk (`backend/app/auth.py`): no necesita la secret key.
+- Los datos creados antes de añadir usuarios pasan al **primer usuario** que inicia sesión.
+
+## Móvil (PWA)
+
+- En pantallas pequeñas la app usa una barra de navegación inferior y un buscador a pantalla completa.
+- **Desde el móvil en tu wifi:** abre `http://<IP-de-tu-PC>:3000` y añade ese origen a
+  `CLERK_AUTHORIZED_PARTIES` en `backend/.env` (separado por comas).
+- **Instalarla como app** requiere HTTPS (o `localhost`). En el PC: `npm run build && npm start` en `frontend/`
+  y luego "Instalar app" en Chrome. En el móvil podrás instalarla cuando esté desplegada con HTTPS.
+- El *service worker* (`frontend/public/sw.js`) guarda las últimas tarjetas vistas para consultarlas sin
+  conexión. Solo se activa en producción.
+
+## Tema
+
+Selector Claro / Oscuro / Sistema en la cabecera. Se guarda en el navegador.
 
 ¿Quieres tarjetas de ejemplo (sobre las tecnologías de esta misma app)? Con la base de datos vacía:
 
@@ -38,7 +64,8 @@ cd backend && uv run python -m app.seed
 
 ```
 backend/                 FastAPI + SQLAlchemy + Alembic + SQLite
-  app/models.py          Topic 1─N Card N─N Tag
+  app/models.py          User 1─N Topic 1─N Card N─N Tag
+  app/auth.py            Verificación del token de Clerk
   app/search.py          Búsqueda full-text con SQLite FTS5
   app/routers/           Endpoints /api/topics, /api/cards, /api/tags, /api/search
   alembic/versions/      Migraciones del esquema

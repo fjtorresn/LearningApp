@@ -10,7 +10,7 @@ export const btn = {
 };
 
 export const input =
-  "w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-500 dark:focus:ring-zinc-800";
+  "w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-base text-zinc-900 sm:text-sm outline-none placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-500 dark:focus:ring-zinc-800";
 
 export const label = "mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300";
 
