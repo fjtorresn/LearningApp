@@ -73,6 +73,17 @@ cd backend && uv run python -m app.seed
 | `e` | Editar la tarjeta abierta |
 | `Ctrl+Enter` | Guardar el formulario de tarjeta |
 
+## Fórmulas matemáticas
+
+Las tarjetas aceptan LaTeX (renderizado con [KaTeX](https://katex.org/)): `$x^2$` dentro del texto y
+`$$…$$` para ecuaciones en su propia línea, incluidas matrices:
+
+```latex
+$$
+A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}
+$$
+```
+
 ## Cómo funciona la búsqueda
 
 - Busca en **título, contenido y tags** a la vez, por **prefijo** (`sqlal` encuentra *SQLAlchemy*) y **sin importar tildes** (`migracion` encuentra *migración*).

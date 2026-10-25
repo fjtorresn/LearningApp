@@ -97,6 +97,14 @@ body {
 .markdown th {
   @apply bg-zinc-50 font-medium dark:bg-zinc-800/50;
 }
+/* Fórmulas en bloque ($$…$$): las matrices anchas se desplazan en horizontal en el móvil
+   en vez de desbordar la tarjeta. */
+.markdown .katex-display {
+  @apply my-4 overflow-x-auto overflow-y-hidden py-1;
+}
+.markdown .katex {
+  font-size: 1.1em;
+}
 .markdown hr {
   @apply border-zinc-200 dark:border-zinc-800;
 }

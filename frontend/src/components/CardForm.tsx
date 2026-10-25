@@ -125,7 +125,7 @@ export function CardForm({ card, defaultTopicId }: { card?: Card; defaultTopicId
             className={`${input} min-h-72 font-mono leading-6 sm:text-[13px]`}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={"Soporta **Markdown**.\n\nEjemplo de código:\n```bash\nuv run alembic upgrade head\n```"}
+            placeholder={"Soporta **Markdown** y fórmulas LaTeX: $x^2$ en línea, $$\\frac{a}{b}$$ en bloque.\n\nEjemplo de código:\n```bash\nuv run alembic upgrade head\n```"}
           />
         ) : (
           <div className="min-h-72 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-950">
