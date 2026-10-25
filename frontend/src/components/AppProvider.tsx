@@ -1,7 +1,8 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { api, type Topic } from "@/lib/api";
+import { api, setAuthTokenGetter, type Topic } from "@/lib/api";
 
 interface AppState {
   topics: Topic[];
@@ -15,6 +16,7 @@ interface AppState {
 const AppContext = createContext<AppState | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const { isSignedIn, getToken } = useAuth();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [topicsLoaded, setTopicsLoaded] = useState(false);
   const [topicsError, setTopicsError] = useState<string | null>(null);
@@ -31,10 +33,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // getToken() devuelve un token vigente (Clerk lo renueva solo); se envía en cada llamada a la API.
+  // Se registra durante el render para que esté listo antes de los efectos de los hijos.
+  setAuthTokenGetter(getToken);
+
   useEffect(() => {
+    if (!isSignedIn) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- carga inicial desde la API
     reloadTopics();
-  }, [reloadTopics]);
+  }, [isSignedIn, reloadTopics]);
 
   // Atajo global: Ctrl+K (o Cmd+K en Mac) abre el buscador.
   useEffect(() => {

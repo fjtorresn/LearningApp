@@ -122,7 +122,7 @@ export function CardForm({ card, defaultTopicId }: { card?: Card; defaultTopicId
         {tab === "write" ? (
           <textarea
             id="card-content"
-            className={`${input} min-h-72 font-mono text-[13px] leading-6`}
+            className={`${input} min-h-72 font-mono leading-6 sm:text-[13px]`}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={"Soporta **Markdown**.\n\nEjemplo de código:\n```bash\nuv run alembic upgrade head\n```"}

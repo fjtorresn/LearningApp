@@ -11,6 +11,21 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  // Permite abrir el servidor de desarrollo desde el móvil en tu red local (p. ej. http://192.168.1.30:3000).
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
+  // El service worker no debe cachearse: así el navegador siempre detecta versiones nuevas.
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
+        ],
+      },
+    ];
+  },
   // Proxy: el navegador llama a /api/* en el mismo origen y Next lo reenvía a FastAPI (sin CORS).
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${API_URL}/api/:path*` }];

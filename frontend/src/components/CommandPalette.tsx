@@ -14,7 +14,7 @@ export function CommandPalette() {
   const { paletteOpen, setPaletteOpen } = useApp();
   const close = () => setPaletteOpen(false);
   return (
-    <Modal open={paletteOpen} onClose={close} position="top" className="max-w-xl">
+    <Modal open={paletteOpen} onClose={close} position="top" className="max-w-xl" fullscreenOnMobile>
       {paletteOpen && <Palette onClose={close} />}
     </Modal>
   );
@@ -87,10 +87,15 @@ function Palette({ onClose }: { onClose: () => void }) {
           className="h-14 w-full bg-transparent text-base outline-none placeholder:text-zinc-400"
           aria-label="Buscar"
         />
-        <Kbd>Esc</Kbd>
+        <span className="hidden sm:inline">
+          <Kbd>Esc</Kbd>
+        </span>
+        <button type="button" onClick={onClose} className="text-sm font-medium text-zinc-500 sm:hidden">
+          Cerrar
+        </button>
       </div>
 
-      <ul ref={listRef} className="max-h-[50vh] overflow-y-auto p-2" role="listbox">
+      <ul ref={listRef} className="max-h-[calc(100dvh-4rem)] overflow-y-auto p-2 sm:max-h-[50vh]" role="listbox">
         {!loading && hits.length === 0 && (
           <li className="px-3 py-8 text-center text-sm text-zinc-500">
             {query ? "Sin resultados" : "Aún no tienes tarjetas"}
@@ -139,7 +144,7 @@ function Palette({ onClose }: { onClose: () => void }) {
         )}
       </ul>
 
-      <div className="flex gap-4 border-t border-zinc-200 px-4 py-2 text-xs text-zinc-500 dark:border-zinc-800">
+      <div className="hidden gap-4 border-t border-zinc-200 px-4 py-2 text-xs text-zinc-500 sm:flex dark:border-zinc-800">
         <span>
           <Kbd>↑</Kbd> <Kbd>↓</Kbd> navegar
         </span>

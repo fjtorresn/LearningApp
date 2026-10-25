@@ -34,7 +34,7 @@ export default function Home() {
     <div className="space-y-10">
       <section>
         <h1 className="text-2xl font-semibold tracking-tight">Tu base de conocimiento</h1>
-        <p className="mt-1 text-zinc-500">
+        <p className="mt-1 hidden text-zinc-500 md:block">
           Pulsa <Kbd>Ctrl K</Kbd> en cualquier momento para{" "}
           <button type="button" onClick={() => setPaletteOpen(true)} className="underline underline-offset-2">
             buscar un concepto

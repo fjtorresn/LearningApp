@@ -69,7 +69,7 @@ export function TagInput({ value, onChange }: { value: string[]; onChange: (tags
             if (draft.trim()) add(draft);
           }}
           placeholder={value.length ? "" : "orm, base-de-datos… (Enter para añadir)"}
-          className="min-w-32 flex-1 bg-transparent py-0.5 text-sm outline-none placeholder:text-zinc-400"
+          className="min-w-32 flex-1 bg-transparent py-0.5 text-base outline-none sm:text-sm placeholder:text-zinc-400"
         />
       </div>
       {focused && suggestions.length > 0 && (

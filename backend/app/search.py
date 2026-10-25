@@ -45,6 +45,7 @@ def _plain_snippet(content: str, length: int = 160) -> str:
 
 def search_cards(
     db: Session,
+    user_id: int,
     q: str = "",
     topic_id: int | None = None,
     tags: list[str] | None = None,
@@ -59,7 +60,7 @@ def search_cards(
         tag_filter_ids = (
             select(card_tags.c.card_id)
             .join(Tag, Tag.id == card_tags.c.tag_id)
-            .where(Tag.name.in_(tags))
+            .where(Tag.user_id == user_id, Tag.name.in_(tags))
             .group_by(card_tags.c.card_id)
             .having(func.count(func.distinct(Tag.name)) == len(set(tags)))
         )
@@ -72,9 +73,9 @@ def search_cards(
                    snippet(cards_fts, 1, :hs, :he, '…', 24) AS snip
             FROM cards_fts
             JOIN cards ON cards.id = cards_fts.rowid
-            WHERE cards_fts MATCH :match
+            WHERE cards_fts MATCH :match AND cards.user_id = :user_id
         """
-        params: dict = {"hs": HL_START, "he": HL_END, "match": match, "limit": limit}
+        params: dict = {"hs": HL_START, "he": HL_END, "match": match, "limit": limit, "user_id": user_id}
         if topic_id is not None:
             sql += " AND cards.topic_id = :topic_id"
             params["topic_id"] = topic_id
@@ -90,7 +91,7 @@ def search_cards(
         cards_by_id = {c.id: c for c in db.scalars(stmt.options(selectinload(Card.tags), selectinload(Card.topic)))}
         cards = [cards_by_id[i] for i in ordered_ids if i in cards_by_id]
     else:
-        stmt = select(Card).options(selectinload(Card.tags), selectinload(Card.topic))
+        stmt = select(Card).options(selectinload(Card.tags), selectinload(Card.topic)).where(Card.user_id == user_id)
         if topic_id is not None:
             stmt = stmt.where(Card.topic_id == topic_id)
         if tag_filter_ids is not None:
