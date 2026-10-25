@@ -1,0 +1,25 @@
+[project]
+name = "learningapp-backend"
+version = "0.1.0"
+description = "API de LearningApp: temas, tarjetas, tags y búsqueda full-text"
+requires-python = ">=3.10"
+dependencies = [
+    "alembic>=1.20.1",
+    "fastapi>=0.162.0",
+    "pydantic>=2.14.1",
+    "sqlalchemy>=2.0.55",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.14.0",
+    "pytest>=9.1.1",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

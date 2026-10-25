@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafafa;
+  --foreground: #18181b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #09090b;
+    --foreground: #f4f4f5;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Estilos del contenido Markdown de las tarjetas */
+.markdown {
+  @apply text-[15px] leading-7 text-zinc-700 dark:text-zinc-300;
+}
+.markdown > * + * {
+  @apply mt-4;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  @apply font-semibold text-zinc-900 dark:text-zinc-50;
+}
+.markdown h1 {
+  @apply text-xl;
+}
+.markdown h2 {
+  @apply mt-6 text-lg;
+}
+.markdown h3 {
+  @apply mt-5 text-base;
+}
+.markdown strong {
+  @apply font-semibold text-zinc-900 dark:text-zinc-100;
+}
+.markdown a {
+  @apply text-blue-600 underline underline-offset-2 dark:text-blue-400;
+}
+.markdown ul {
+  @apply list-disc pl-6;
+}
+.markdown ol {
+  @apply list-decimal pl-6;
+}
+.markdown li + li,
+.markdown li > ul,
+.markdown li > ol,
+.markdown li > pre {
+  @apply mt-1.5;
+}
+.markdown blockquote {
+  @apply border-l-4 border-zinc-200 pl-4 text-zinc-500 italic dark:border-zinc-700;
+}
+.markdown :not(pre) > code {
+  @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[0.85em] text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200;
+}
+.markdown pre {
+  @apply overflow-x-auto rounded-xl bg-[#0d1117] p-4 text-[13px] leading-6;
+}
+.markdown pre code.hljs {
+  @apply bg-transparent p-0 font-mono;
+}
+.markdown table {
+  @apply w-full border-collapse text-sm;
+}
+.markdown th,
+.markdown td {
+  @apply border border-zinc-200 px-3 py-1.5 text-left dark:border-zinc-700;
+}
+.markdown th {
+  @apply bg-zinc-50 font-medium dark:bg-zinc-800/50;
+}
+.markdown hr {
+  @apply border-zinc-200 dark:border-zinc-800;
+}
