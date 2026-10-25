@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
-const API_URL = process.env.API_URL ?? "http://localhost:8765";
+// 127.0.0.1 y no "localhost": en este sistema localhost resuelve a IPv6 (::1) y uvicorn escucha en IPv4.
+const API_URL = process.env.API_URL ?? "http://127.0.0.1:8765";
 
 const nextConfig: NextConfig = {
   turbopack: {

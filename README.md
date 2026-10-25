@@ -34,6 +34,26 @@ Abre http://localhost:3000 e inicia sesión con Google. La documentación intera
 - El *service worker* (`frontend/public/sw.js`) guarda las últimas tarjetas vistas para consultarlas sin
   conexión. Solo se activa en producción.
 
+## Usarla desde el celular con Tailscale (gratis)
+
+La app corre en tu PC y el celular accede a ella por una red privada de [Tailscale](https://tailscale.com/),
+con HTTPS (necesario para instalarla como app). Solo tus dispositivos pueden abrirla.
+
+1. Instala Tailscale en el PC (`curl -fsSL https://tailscale.com/install.sh | sh` y
+   `sudo tailscale up --operator=$USER`) y en el celular, con la misma cuenta.
+2. Publica la app en tu red: `tailscale serve --bg 3000` (la primera vez te pedirá activar Serve/HTTPS).
+3. Añade la dirección que muestra (`https://<tu-pc>.<tu-red>.ts.net`) a `CLERK_AUTHORIZED_PARTIES` en `backend/.env`.
+4. Arranque automático al encender el PC (servicio de systemd que ejecuta `start.sh` en modo producción):
+
+```bash
+./deploy/install-service.sh
+```
+
+Comandos útiles: `systemctl --user status learningapp`, `journalctl --user -u learningapp -f` y, tras cambiar
+el código, `systemctl --user restart learningapp` (recompila el frontend si hace falta).
+
+> El PC debe estar encendido. Sin conexión, la app instalada muestra las tarjetas que ya habías abierto.
+
 ## Tema
 
 Selector Claro / Oscuro / Sistema en la cabecera. Se guarda en el navegador.
