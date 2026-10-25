@@ -54,6 +54,12 @@ el código, `systemctl --user restart learningapp` (recompila el frontend si hac
 
 > El PC debe estar encendido. Sin conexión, la app instalada muestra las tarjetas que ya habías abierto.
 
+## Docker y Raspberry Pi
+
+`docker compose up -d --build` levanta la app en contenedores (backend + frontend) en cualquier máquina con Docker.
+Las imágenes funcionan en amd64 y arm64; `./deploy/build-arm64.sh` compila en el PC las de la Raspberry Pi.
+Guía paso a paso: [deploy/RASPBERRY_PI.md](deploy/RASPBERRY_PI.md).
+
 ## Tema
 
 Selector Claro / Oscuro / Sistema en la cabecera. Se guarda en el navegador.

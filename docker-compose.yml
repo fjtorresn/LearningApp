@@ -1,0 +1,45 @@
+# LearningApp con Docker: backend (FastAPI) + frontend (Next.js).
+#
+#   docker compose up -d --build     construir y arrancar (en el PC o directamente en la Pi)
+#   docker compose logs -f           ver logs
+#   docker compose down              parar
+#
+# Necesita backend/.env y frontend/.env.local (claves de Clerk; ver README).
+# Para compilar en el PC imágenes de la Raspberry Pi: ./deploy/build-arm64.sh
+
+name: learningapp
+
+services:
+  backend:
+    build: ./backend
+    image: learningapp-backend:latest
+    env_file: ./backend/.env
+    volumes:
+      # La base de datos SQLite vive en el host (backend/data/learningapp.db): fácil de copiar y respaldar.
+      - ./backend/data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend
+      secrets: [frontend_env]
+    image: learningapp-frontend:latest
+    # En ejecución, el middleware de Clerk necesita CLERK_SECRET_KEY.
+    env_file: ./frontend/.env.local
+    ports:
+      # Solo accesible desde la propia máquina; `tailscale serve` lo publica con HTTPS.
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+secrets:
+  frontend_env:
+    file: ./frontend/.env.local

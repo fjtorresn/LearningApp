@@ -17,3 +17,6 @@ frontend/.next/
 frontend/next-env.d.ts
 
 .DS_Store
+
+# Imágenes Docker exportadas para la Raspberry Pi
+dist/

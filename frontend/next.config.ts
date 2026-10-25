@@ -4,6 +4,10 @@ import type { NextConfig } from "next";
 const API_URL = process.env.API_URL ?? "http://127.0.0.1:8765";
 
 const nextConfig: NextConfig = {
+  // En Docker (NEXT_OUTPUT=standalone) genera un servidor mínimo autocontenido; con `npm start` no hace falta.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
+  // No usamos next/image: sin optimización de imágenes no hace falta sharp (binario nativo por arquitectura).
+  images: { unoptimized: true },
   turbopack: {
     rules: {
       "*.css": {
