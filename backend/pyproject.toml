@@ -2,7 +2,7 @@
 name = "learningapp-backend"
 version = "0.1.0"
 description = "API de LearningApp: temas, tarjetas, tags y búsqueda full-text"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.20.1",
     "fastapi>=0.162.0",

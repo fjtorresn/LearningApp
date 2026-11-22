@@ -4,7 +4,7 @@
 # npm install y `next build` corren en la arquitectura del PC ($BUILDPLATFORM): el resultado
 # es JavaScript, igual para cualquier procesador. La etapa final solo copia ese resultado.
 
-FROM --platform=$BUILDPLATFORM node:22-bookworm-slim AS build
+FROM --platform=$BUILDPLATFORM node:22-trixie-slim AS build
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY package.json package-lock.json ./
@@ -21,7 +21,7 @@ RUN --mount=type=secret,id=frontend_env,target=/app/.env.local,required=true npm
  # Comprobación: la imagen final no debe contener módulos nativos (no funcionarían en la Pi).
  && ! find .next/standalone -name "*.node" | grep .
 
-FROM node:22-bookworm-slim
+FROM node:22-trixie-slim
 WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
 # "standalone" = servidor mínimo con solo los node_modules que la app usa de verdad.
