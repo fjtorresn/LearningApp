@@ -9,7 +9,7 @@
 # traería el binario de la arquitectura destino, que el PC no puede ejecutar.
 FROM --platform=$BUILDPLATFORM ghcr.io/astral-sh/uv:0.13.5 AS uv
 
-FROM --platform=$BUILDPLATFORM python:3.10-slim-bookworm AS deps
+FROM --platform=$BUILDPLATFORM python:3.13-slim-trixie AS deps
 COPY --from=uv /uv /usr/local/bin/uv
 ARG TARGETARCH
 WORKDIR /build
@@ -20,12 +20,12 @@ RUN case "$TARGETARCH" in \
       *) echo "Arquitectura no soportada: $TARGETARCH" && exit 1 ;; \
     esac \
  && uv export --frozen --no-dev --no-hashes --no-emit-project -o requirements.txt \
- && uv pip install --target /deps --python-version 3.10 --python-platform "$PLATFORM" \
+ && uv pip install --target /deps --python-version 3.13 --python-platform "$PLATFORM" \
       --only-binary :all: -r requirements.txt \
  # Carpeta de datos con dueño UID 1000 (el usuario sin privilegios de la imagen final).
  && mkdir -p /data && chown 1000:1000 /data
 
-FROM python:3.10-slim-bookworm
+FROM python:3.13-slim-trixie
 WORKDIR /app
 COPY --from=deps /deps /app/deps
 COPY --from=deps --chown=1000:1000 /data /data
